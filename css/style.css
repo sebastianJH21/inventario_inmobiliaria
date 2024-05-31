@@ -1,0 +1,147 @@
+:root{
+
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    font-size: 62.5%;
+}
+body{
+    font-size: 1.6rem;
+}
+input, label {
+    height: 20px;
+    width: 100%;
+}
+textarea {
+    width: 100%;
+    padding: 2px 5px;
+}
+
+.disabled {
+    pointer-events: none;
+}
+.nav {
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+}
+.nav div {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.code_pro, .num_invent {
+    display: flex;
+}
+div .buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.btn{
+    font-size: 1.5rem;
+    border-radius: 6px;
+}
+.nav-tabs{
+    margin-top: 2rem;
+    margin-bottom: 0;
+    display: flex;
+    border-bottom: none;
+}
+.nav-tabs li{
+    list-style: none;
+}
+.nav-item{
+    overflow: hidden;
+    cursor: pointer;
+    border-top: 1px solid ghostwhite;
+    border-right: 1px solid ghostwhite;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+    border-color: #dee2e6  #dee2e6  #fff;
+    position: relative;
+    z-index: 1;
+}
+.forms{
+    border: 1px solid gainsboro;
+    position: relative;
+    bottom: 1px;
+    width: 100%;
+}
+.object{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2rem;
+}
+.content-object{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    flex-wrap: wrap;
+}
+fieldset {
+    border: 1px solid gray;
+    margin: 2rem;
+    margin-top: 1rem;
+    border-radius: 1rem;
+}
+legend {
+    padding: 0 5px;
+    width: fit-content;
+    text-align: center;
+    text-transform: capitalize;
+}
+.object > legend {
+    font-weight: bold;
+}
+fieldset .bars{
+    margin: 0 1rem;
+    margin-top: 1rem;
+}
+.bars {
+    display: flex;
+    padding: 1rem;
+    justify-content: space-around;
+    min-width: 13rem;
+}
+.bars div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+@media (max-width: 675px){
+    .content-object{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 554px){
+    .nav{
+        justify-content: center;
+    }
+    div .buttons {
+        margin-top: 1rem;
+        width: 100%;
+        margin-left: 26rem;
+    }
+}
+@media (max-width: 524px){
+    .content-object{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 426px){
+    div .buttons {
+        margin-top: 1rem;
+        width: 100%;
+        margin-left: 0;
+        gap: 8rem;
+    }
+    .content-object{
+        grid-template-columns: 90%;
+        justify-content: center;
+    }
+}
