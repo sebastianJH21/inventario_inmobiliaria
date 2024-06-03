@@ -9,7 +9,6 @@
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
-
 <body>
     <main class="container-xl">
         <nav class="nav">
@@ -47,104 +46,11 @@
             </li>
         </ul>
         <form class="forms" name="General" id="gen_desc">
-            <!-- <fieldset class="object" name="stairs">
-                <legend>Escaleras</legend>
-                <section class="content-object">
-                    <fieldset class="bars">
-                        <legend>Reja</legend>
-                        <div>
-                            <label for="bars_yes">Si</label>
-                            <input type="radio" name="bars" id="bars_yes" value="yes" required>
-                        </div>
-                        <div>
-                            <label for="bars_not">No</label>
-                            <input type="radio" name="bars" id="bars_not" value="not">
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Pasa Manos</legend>
-                        <div>
-                            <label for="railing_yes">Si</label>
-                            <input type="radio" name="railing" id="railing_yes" value="yes" required>
-                        </div>
-                        <div>
-                            <label for="railing_not">No</label>
-                            <input type="radio" name="railing" id="railing_not" value="not">
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Chapa</legend>
-                        <div>
-                            <label for="lock_yes">Si</label>
-                            <input type="radio" name="lock" id="lock_yes" value="yes" required>
-                        </div>
-                        <div>
-                            <label for="bars_not">No</label>
-                            <input type="radio" name="lock" id="lock_not" value="not">
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Llaves</legend>
-                        <div>
-                            <label for="keys">Cantidad</label>
-                            <input type="number" name="key" id="keys">
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Ojo Magico</legend>
-                        <div>
-                            <label for="magic-eye_yes">Si</label>
-                            <input type="radio" name="magic-eye" id="magic-eye_yes" value="yes" required>
-                        </div>
-                        <div>
-                            <label for="lock_not">No</label>
-                            <input type="radio" name="magic-eye" id="magic-eye_not" value="not">
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Estado Inicial</legend>
-                        <div>
-                            <label for="status_ini">Estado</label>
-                            <select name="status_ini" id="status_ini" required>
-                                <option value=""></option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </fieldset>
-                    <fieldset class="bars">
-                        <legend>Estado Final</legend>
-                        <div>
-                            <label for="status_end">Estado</label>
-                            <select name="status_end" id="status_end" required>
-                                <option value=""></option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </fieldset>
-                </section>
-                <fieldset class="bars">
-                    <legend>Observaciones</legend>
-                    <textarea type="number" name="status_end" id="observations" rows="3" col="100" maxlength="255"></textarea>
-                </fieldset>
-            </fieldset> -->
             <aside class="buttons">
-                <button class="btn btn-primary" type="button" id="guardar">Guardar</button>
+                <button class="btn btn-primary" type="button" name="cancelar" id="cancelar">Cancelar</button>
+                <button class="btn btn-primary" type="button" name="guardar" id="guardar">Guardar</button>
             </aside>
         </form>
-
-        <!-- <form class="forms" name="desc_general" id="desc_general">
-            <div class="buttons">
-                <button class="btn btn-primary"  type="button">Guardar</button>
-            </div>
-        </form> -->
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
@@ -153,8 +59,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
-    <script src="js/template.js"></script>
+    
+    <script src="js/jquery.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/template.js"></script>
 </body>
 
 </html>
