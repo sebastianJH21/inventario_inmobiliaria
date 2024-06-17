@@ -11,9 +11,12 @@ function form_DesGeneral() {
     })
 }
 form_DesGeneral();
-check();
-BtnCancelar();
-guardar();
+document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
+    swit.disabled = true;
+})
+if (clickNuevo == 1) {
+    habilitarForms();
+}
 
 let navItem = document.querySelectorAll('.nav-item');
 navItem.forEach(function (item) {
@@ -26,7 +29,7 @@ navItem.forEach(function (item) {
         <form class="forms" name="${zona}" id="${zona}">
             <aside class="buttons">
                 <button class="btn btn-primary" type="button" name="cancelar" id="cancelar">Cancelar</button>
-                <button class="btn btn-primary"  type="button" name="guardar" id="guardar">Guardar</button>
+                <button class="btn btn-primary disabled"  type="submit" name="guardar" id="guardar">Guardar</button>
             </aside>
         </form> 
         `
@@ -96,9 +99,16 @@ navItem.forEach(function (item) {
                 console.log(zona);
                 break;
         }
-        check();
-        BtnCancelar();
-        guardar();
+
+        document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
+            swit.disabled = true;
+        })
+        if (clickNuevo == 1) {
+            habilitarForms();
+        }
+        //funciones botones
+        document.getElementById('cancelar').addEventListener('click', cancelar)
+        document.querySelector('.forms').addEventListener('submit', guardar)
     });
 });
 function crearPlantilla(nombre, object) {
@@ -119,7 +129,7 @@ function template_object(nom, template_obj) {
                 <fieldset class="atributo">
                     <legend>Estado Inicial</legend>
                     <aside>
-                        <select name="${nom}-estado_inicial" id="${nom}-estado_inicial" required>
+                        <select name="${nom}-estado_inicial" id="${nom}-estado_inicial">
                             <option></option>
                             <option value="1">Muy Malo</option>
                             <option value="2">Malo</option>
@@ -132,7 +142,7 @@ function template_object(nom, template_obj) {
                 <fieldset class="atributo">
                     <legend>Estado Final</legend>
                     <aside>
-                        <select name="${nom}-estado_final" id="${nom}-estado_final" required>
+                        <select name="${nom}-estado_final" id="${nom}-estado_final">
                             <option value=""></option>
                             <option value="1">Muy Malo</option>
                             <option value="2">Malo</option>
@@ -300,88 +310,31 @@ function template_atributos(object, nom) {
     return template;
 }
 
-function check() {
-    document.getElementsByName("switch").forEach(function (check) {
-        check.addEventListener('click', function () {
-            let parent = check.parentElement.parentElement;
-            if (parent.classList.contains('disabled')) {
-                parent.classList.remove('disabled');
-                let nombre = parent.name;
-                obj_inventario[nombre].disponible = 1;
-                obj_inventario[nombre].id_inventario = document.querySelector('#num_invent').value;
-            } else {
-                parent.classList.add('disabled');
-                let inputs = parent.querySelectorAll('input, textarea, select');
-                inputs.forEach(input => {
-                    if (input.type == "radio") {
-                        input.checked = false;
-                    } else if (input.tagName == "select") {
-                        input.children.value = "";
-                    } else {
-                        input.value = "";
-                    }
-                })
-                let nombre = parent.name;
-                obj_inventario[nombre].disponible = 0;
-                obj_inventario[nombre].id_inventario = "";
-            }
-        })
-    });
-}
-document.getElementById("code_pro").addEventListener('input', function () {
+document.getElementById("code_pro").addEventListener('input',habilitarBotones)
+document.getElementById("num_invent").addEventListener('input',habilitarBotones)
+ function habilitarBotones() {
     let cod_propiedad = document.getElementById("code_pro");
-    let inventario = document.getElementById("num_invent");
+    let numInventario = document.getElementById("num_invent");
     let BtnNuevo = document.getElementById("nuevo");
-    if (cod_propiedad.value !== "" && inventario.value == "") {
-        BtnNuevo.classList.remove('disabled')
-    } else {
-        BtnNuevo.classList.add('disabled')
+    let BtnBuscar = document.getElementById("buscar");
+    let BtnEliminar = document.getElementById("eliminar");
+
+    if (cod_propiedad.value == "" && numInventario.value != "") {
+        BtnBuscar.classList.remove('disabled');
+        BtnEliminar.classList.remove('disabled');
+        BtnNuevo.classList.add('disabled');
+    } else if(cod_propiedad.value != "" && numInventario.value == ""){
+        BtnNuevo.classList.remove('disabled');
+        BtnBuscar.classList.remove('disabled');
+        BtnEliminar.classList.add('disabled');
+    }else{
+        BtnNuevo.classList.add('disabled');
+        BtnBuscar.classList.add('disabled');
+        BtnEliminar.classList.add('disabled');
     }
-    inventario.addEventListener('input', function () {
-        if (inventario.value == "" && cod_propiedad.value !== "") {
-            BtnNuevo.classList.remove('disabled')
-        } else {
-            BtnNuevo.classList.add('disabled')
-        }
-    })
-});
-document.getElementById('nuevo').addEventListener('click', function () {
-    document.querySelector('.num_invent').classList.add('disabled')
-    document.querySelector('.code_pro').classList.add('disabled')
-    // document.querySelector('#guardar').classList.remove('disabled')
-    let codigo_pro = document.querySelector('#code_pro').value;
-    let fechaActual = new Date();
-    let dia = fechaActual.getDate();
-    let mes = fechaActual.getMonth() + 1; // Nota: en JavaScript, los meses van de 0 a 11
-    let year = fechaActual.getFullYear();
-    // Formatear el día y el mes con dos dígitos si es necesario
-    dia = (dia < 10) ? '0' + dia : dia;
-    mes = (mes < 10) ? '0' + mes : mes;
-    // Crear la cadena con el formato "dd-mm-yyyy"
-    let fecha = year + '-' + mes + '-' + dia;
-    console.log(fecha);
-    $.ajax({
-        url: 'includes/functions.php',
-        type: 'POST',
-        data: {
-            "funcion": 1,
-            "codigo": codigo_pro,
-            "fecha": fecha
-        },
-        success: function (response) {
-            console.log(response);
-            let inv = JSON.parse(response);
-            document.querySelector('#num_invent').value = inv;
-        }
-    })
-})
-function BtnCancelar() {
-    document.getElementById('cancelar').addEventListener('click', function () {
-        document.querySelector('.num_invent').classList.remove('disabled')
-        document.querySelector('#num_invent').value = "";
-        document.querySelector('.code_pro').classList.remove('disabled')
-        window.scrollTo(0, 0);
-    })
-}
+ }
+
+
+
 
 

@@ -310,6 +310,23 @@ const obj_inventario = {
     "ventanas": ventanas, //39
     "vidrios": vidrios, //40
 }
+// botones del fomrmulairo
+document.querySelector('.forms').addEventListener('submit', guardar);
+document.getElementById('eliminar').addEventListener('click', eliminar);
+let clickNuevo;
+document.getElementById('nuevo').addEventListener('click', function () {
+    let nuevoInv = nuevo();
+    console.log(nuevoInv);
+    if (nuevoInv) {
+        clickNuevo = 1;
+        cancelar();
+        habilitarForms();
+        document.querySelector('#nuevo').classList.add('disabled')
+    }
+});
+document.getElementById('cancelar').addEventListener('click', cancelar)
+
+// alerta temproral
 function toast(tipo, mensaje) {
     let titulo;
     let alerta;
@@ -329,7 +346,7 @@ function toast(tipo, mensaje) {
                 </button>
             </aside>
             <aside class="toast-body">
-                ${mensaje}
+                <p>${mensaje}</p>
             </aside>
         </aside>
     `
@@ -340,143 +357,237 @@ function toast(tipo, mensaje) {
         cont_toast.firstElementChild.remove();
     }, 5000)
 }
-function campoVacio(input) {
-    let template = `
-        <aside class="empty">
-            <aside class="alert-empty" name="alert-empty">
-                <aside class="alert-icon">
-                    <i class="bi bi-exclamation-triangle-fill text-warning"></i>
-                </aside>
-                <aside class="-alert-body">
-                    <span>Completa este campo</span>
-                </aside>
-            </aside>
-        </aside>
-    `
-    let padre = input.closest('.atributo');
-    console.log(padre);
-    padre.insertAdjacentHTML('beforeend', template);
+//funcion checkbox para habilitar formularios
 
-}
-function guardar() {
-    document.getElementById("guardar").addEventListener('click', function () {
-        let form = document.querySelector('.forms');
-        form.querySelectorAll('.object').forEach(function (obj) {
-            if (!obj.classList.contains('disabled')) {
-                let nombre = obj.name
-                let objeto = new obj_inventario[nombre]();
-                let id_inventario = document.querySelector('#num_invent').value;
-                let zona = document.querySelector('.forms').name;
-                let id_zona;
-                switch (zona) {
-                    case "General":
-                        id_zona = 1;
-                        break;
-                    case "Sala":
-                        id_zona = 2;
-                        break;
-                    case "Cocina":
-                        id_zona = 3;
-                        break;
-                    case "Baño":
-                        id_zona = 4;
-                        break;
-                    case "Alcoba":
-                        id_zona = 5;
-                        break;
-                    case "Patio":
-                        id_zona = 6;
-                        break;
+function check(check, funcion = 0) {
+    let parent = check.parentElement.parentElement;
+    if (funcion == 1) {
+        if (parent.classList.contains('disabled')) {
+            parent.classList.remove('disabled');
+            parent.querySelectorAll('input, select').forEach(input => {
+                if (input.name != "switch") {
+                    input.setAttribute('required', 'true')
                 }
-                let propiedades = Array();
-                let i = 0;
-                obj.querySelectorAll('input, select, textarea').forEach(function (input) { //Selecionar todos los input del formulario 
-                    if (input.name.includes(nombre)) { //Selecionar los inputs de cada elemento
-                        let atributo = input.name.split('-')[1]; // extraer el nombre de cada elemento del objeto
-                        if (input.type == "radio") { //separar los input radio
-                            let nom = input.name;
-                            let radio = document.querySelectorAll(`input[name="${nom}"]:checked`);
-                            if(radio.length == 0){
-                                if(input.id.includes("_no")){
-                                    campoVacio(input);
-                                    return;
-                                }
-                            }
-                            // console.log(radio);
+            })
+        } else {
+            parent.classList.add('disabled');
+            vaciarInput(parent);
+            parent.querySelectorAll('input, textarea, select').forEach(input => {
+                input.removeAttribute('required')
+            })
+        }
+    } else {
+        parent.classList.add('disabled');
+        vaciarInput(parent);
+        parent.querySelectorAll('input, textarea, select').forEach(input => {
+            input.removeAttribute('required')
+        })
+    }
+}
+function vaciarInput(padre) {
+    padre.querySelectorAll('input, textarea, select').forEach(function (input) {
+        if (input.type == "radio") {
+            input.checked = false;
+        } else if (input.tagName == "select") {
+            input.children.value = "";
+        } else {
+            input.value = "";
+        }
+    });
+}
+function cancelar() {
+    document.querySelector('.num_invent').classList.remove('disabled')
+    document.querySelector('#num_invent').value = "";
+    document.querySelector('.code_pro').classList.remove('disabled')
+    document.querySelector('#nuevo').classList.remove('disabled')
+    window.scrollTo(0, 0);
+    document.getElementsByName("switch").forEach(function (swit) {
+        check(swit);
+        swit.checked = false;
+    })
+}
+function habilitarForms() {
+    document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
+        swit.disabled = false;
+    })
+    document.getElementsByName("switch").forEach(function (swit) {
+        swit.addEventListener('click', function () {
+            check(swit, 1);
+            let i = 0;
+            let checks = Array();
+            document.querySelectorAll(".object").forEach(function (obj) {
+                checks[i] = obj.classList.contains('disabled');
+                i++;
+            })
+            if (checks.includes(false)) {
+                document.querySelector('#guardar').classList.remove('disabled')
+            } else {
+                document.querySelector('#guardar').classList.add('disabled')
+            }
+        })
+    })
+}
+// funciones de los botones
+function nuevo() {
+    let codigo_pro = document.querySelector('#code_pro').value;
+    let fechaActual = new Date();
+    let dia = fechaActual.getDate();
+    let mes = fechaActual.getMonth() + 1; // Nota: en JavaScript, los meses van de 0 a 11
+    let year = fechaActual.getFullYear();
+    // Formatear el día y el mes con dos dígitos si es necesario
+    dia = (dia < 10) ? '0' + dia : dia;
+    mes = (mes < 10) ? '0' + mes : mes;
+    // Crear la cadena con el formato "dd-mm-yyyy"
+    let fecha = year + '-' + mes + '-' + dia;
+    return new Promise(function (respuesta) {
+        $.ajax({
+            url: 'includes/functions.php',
+            type: 'POST',
+            data: {
+                "funcion": 1, //Crear nuevo inventario
+                "codigo": codigo_pro,
+                "fecha": fecha
+            },
+            success: function (response) {
+                let inv = JSON.parse(response);
+                if (inv["proceso"]) {
+                    document.querySelector('#num_invent').value = inv["id_inventario"];
+                    document.querySelector('.num_invent').classList.add('disabled')
+                    document.querySelector('.code_pro').classList.add('disabled')
 
-
-                            if (input.checked) { //validad el radio seleccionado
-                                objeto[atributo] = input.value; //extrar el valor y almacenar en el objeto
-                                // console.log(input.name);
-                            } else {
-                                let vacio = 1;
-                                // vacios = vacio + vacios
-                                if (vacio == 2) {
-                                    campoVacio(input)
-                                    return;
-                                }else{
-                                    vacio++
-                                }
-                            }
-                        } else if (input.type == "textarea") {
-                            objeto[atributo] = input.value;
-                        } else {
-                            if (input.value != "") {
-                                objeto[atributo] = input.value;
-                                if (!propiedades.includes(atributo)) {
-                                    propiedades[i] = atributo;
-                                    i++;
-                                }
-                            } else {
-                                campoVacio(input)
-                                return;
-                                // console.log(input)
-                            }
-                        }
-                    }
-                })
-                let empty = document.querySelectorAll('.empty')
-                if(empty.length == 0){ // enviar datos si no hay campos vacios
-                    console.log("Enviar datos")
-                    $.ajax({
-                        url: 'includes/functions.php',
-                        type: 'POST',
-                        data: {
-                            "funcion": 2, //guardar
-                            "nombre": nombre,
-                            // "id_inventario":id_inventario,
-                            "id_inventario": 1, // INVENTARIO DE PRUEBA
-                            "id_zona": id_zona,
-                            "propiedades": propiedades,
-                            "objeto": objeto
-                        },
-                        success: function (response) {
-                            let respuesta = JSON.parse(response);
-                            if (respuesta["proceso"]) {
-                                let msg = nombre+" se guardo con exito";
-                                toast(0,msg)
-                            } else {
-                                let msg = nombre+" no se guardo con exito";
-                                toast(0,msg)
-                            }
-                        }
-                    })
-                }else{ // no enviar datos y mostrar alerta
-                    let msg = "Falta información por completar";
-                    toast(0,msg)
-                    console.log("no enviar datos")
+                    let msg = "Se creó el nuevo inventario";
+                    toast(1, msg)
+                    respuesta(true);
+                } else {
+                    let msg = "El código de inmobiliaria no existe";
+                    toast(0, msg)
+                    respuesta(false);
                 }
             }
         })
-    setTimeout(()=>{
-        document.addEventListener('click',function(event){
-            let elementos = document.querySelectorAll('.empty');
-            elementos.forEach(elemento => {
-                elemento.remove();
-            })
-        })
-    },1000)
     })
 }
 
+function guardar(event) {
+    event.preventDefault();
+    let form = document.querySelector('.forms');
+    form.querySelectorAll('.object').forEach(function (obj) {
+        if (!obj.classList.contains('disabled')) {
+            let nombre = obj.name
+            let objeto = new obj_inventario[nombre]();
+            let id_inventario = document.querySelector('#num_invent').value;
+            let zona = document.querySelector('.forms').name;
+            let id_zona;
+            switch (zona) {
+                case "General":
+                    id_zona = 1;
+                    break;
+                case "Sala":
+                    id_zona = 2;
+                    break;
+                case "Cocina":
+                    id_zona = 3;
+                    break;
+                case "Baño":
+                    id_zona = 4;
+                    break;
+                case "Alcoba":
+                    id_zona = 5;
+                    break;
+                case "Patio":
+                    id_zona = 6;
+                    break;
+            }
+            let propiedades = Array();
+            let i = 0;
+            obj.querySelectorAll('input, select, textarea').forEach(function (input) { //Selecionar todos los input del formulario 
+                if (input.name.includes(nombre)) { //Selecionar los inputs de cada elemento
+                    let atributo = input.name.split('-')[1]; // extraer el nombre de cada elemento del objeto
+                    if (input.type == "radio") { //separar los input radio
+                        if (input.checked) { //validad el radio seleccionado
+                            objeto[atributo] = input.value; //extrar el valor y almacenar en el objeto
+                            if (!propiedades.includes(atributo)) {
+                                propiedades[i] = atributo;
+                                i++
+                            }
+                        }
+                    } else {
+                        objeto[atributo] = input.value;
+                        if (!propiedades.includes(atributo)) {
+                            propiedades[i] = atributo;
+                            i++
+                        }
+                    }
+                }
+            })
+            $.ajax({
+                url: 'includes/functions.php',
+                type: 'POST',
+                data: {
+                    "funcion": 2, //guardar
+                    "tabla": nombre,
+                    "id_inventario": id_inventario,
+                    // "id_inventario": 1, // INVENTARIO DE PRUEBA
+                    "id_zona": id_zona,
+                    "propiedades": propiedades,
+                    "objeto": objeto
+                },
+                beforeSend: function () {
+                    $('#loader_guardar').show();
+                },
+                success: function (response) {
+                    let respuesta = JSON.parse(response);
+                    if (respuesta["proceso"]) {
+                        let nom1 = nombre.split('_')[0];
+                        let nom2 = nombre.split('_')[0];
+                        let mod_nombre = nom1 + " " + nom2;
+                        let msg = `<strong>${mod_nombre}</strong> se guardo con exito`;
+                        toast(1, msg)
+                        cancelar();
+                    } else {
+                        let msg = `<strong>${mod_nombre}</strong> no se guardo con exito`;
+                        toast(0, msg)
+                    }
+                    $('#loader_guardar').hide();
+                }
+            })
+        }
+    })
+}
 
+function eliminar() {
+    let id_inventario = document.querySelector('#num_invent').value;
+    let tablas = Array();
+    let i = 0;
+    Object.keys(obj_inventario).forEach(function (tabla) {
+        tablas[i] = tabla;
+        i++;
+    })
+    console.log(tablas)
+    $.ajax({
+        url: 'includes/functions.php',
+        type: 'POST',
+        data: {
+            "funcion": 3,
+            "tablas": tablas,
+            "id_inventario": id_inventario
+        },
+        beforeSend: function () {
+            $('#loader_eliminar').show();
+        },
+        success: function (response) {
+            let respuesta = JSON.parse(response)
+            console.log(respuesta);
+            if (respuesta["proceso"]) {
+                let msg = "Se elimino el formulario";
+                console.log(msg)
+                toast(1, msg);
+            } else {
+                let msg = "No existe este formulario";
+                console.log(msg)
+                toast(0, msg);
+            }
+            $('#loader_eliminar').hide();
+        }
+    })
+}

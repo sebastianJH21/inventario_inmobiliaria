@@ -23,7 +23,8 @@
                 <input type="number" name="num_invent" id="num_invent">
             </aside>
             <aside class="buttons">
-                <button type="button" class="btn btn-primary" id="buscar">Buscar</button>
+                <button type="button" class="btn btn-primary disabled" id="eliminar"><span class="spinner-border" id="loader_eliminar"></span>Eliminar</button>
+                <button type="button" class="btn btn-primary  disabled" id="buscar"><span class="spinner-border" id="loader_buscar"></span>Buscar</button>
                 <button type="button" class="btn btn-primary disabled" id="nuevo">Nuevo</button>
             </aside>
         </nav>
@@ -50,33 +51,19 @@
         <form class="forms" name="General" id="gen_desc">
             <aside class="buttons">
                 <button class="btn btn-primary" type="button" name="cancelar" id="cancelar">Cancelar</button>
-                <!-- <button class="btn btn-primary disabled" type="button" name="guardar" id="guardar"">Guardar</button> -->
-                <button class="btn btn-primary" type="button" name="guardar" id="guardar">Guardar</button>
+                <button class="btn btn-primary disabled" type="submit" name="guardar" id="guardar"><span class="spinner-border" id="loader_guardar"></span>Guardar</button>
             </aside>
         </form>
+    <aside class="contenedor-toast position-fixed bottom-0 right-0 p-3"
+        style="z-index: 5; right: 0; bottom: 0;">
+    </aside>
     </main>
-
-    <button type=" button" class="btn btn-primary" id="liveToastBtn" onclick="toast()" hidden>Show live toast</button>
-
-                <aside class="contenedor-toast position-fixed bottom-0 right-0 p-3"
-                    style="z-index: 5; right: 0; bottom: 0;">
-                </aside>
-
-                <!-- <aside class="alert-empty" name="alert-empty">
-                    <aside class="alert-icon">
-                        <i class="bi bi-exclamation-triangle-fill text-warning"></i>
-                    </aside>
-                    <aside class="-alert-body">
-                        <span>Completa este campo</span>
-                    </aside>
-                </aside> -->
-
+    
+    
 
 
                 <script src="js/jquery.min.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-                    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-                    crossorigin="anonymous"></script>
+                
                 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
                     integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
                     crossorigin="anonymous"></script>
