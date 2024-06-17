@@ -85,17 +85,14 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 $objeto = json_decode(json_encode($_POST["objeto"]));
                 $array_obj = get_object_vars($objeto);
-                // var_dump($array_obj);
 
                 $propiedades = array_keys($array_obj);
                 $propiedades = implode(', ',$propiedades);
-                // var_dump($propiedades);
 
                 $valores = array_map( function ($value) {
                     return "'".$value."'";
                 },$array_obj);
                 $valores = implode(', ',$valores);
-                    // var_dump($valores);
 
                 // $guardar = guardar($tabla,$id_inventario,$id_zona,$propiedades,$valores);
                 // $respuesta = [

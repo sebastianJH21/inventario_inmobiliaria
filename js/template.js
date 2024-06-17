@@ -309,6 +309,41 @@ function template_atributos(object, nom) {
     })
     return template;
 }
+function modal(msg){
+    let template = `
+    <aside class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <aside class="modal-dialog">
+                <aside class="modal-content">
+                    <aside class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </aside>
+                    <aside class="modal-body">
+                        <p>${msg}</p>
+                    </aside>
+                    <aside class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelar-modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="confirmar">Confirmar</button>
+                    </aside>
+                </aside>
+            </aside>
+        </aside>
+    `
+    return new Promise((resolve)=>{
+        document.querySelector('.btn-modal').insertAdjacentHTML('afterend', template);
+        document.querySelector('#cancelar-modal').addEventListener('click',function(){
+            document.querySelector('.modal').remove();
+            resolve(false)
+        })
+        document.querySelector('#confirmar').addEventListener('click',function(){
+            document.querySelector('.close').click();
+            document.querySelector('.modal').remove();
+            resolve(true)
+        })
+    })
+}
 
 document.getElementById("code_pro").addEventListener('input',habilitarBotones)
 document.getElementById("num_invent").addEventListener('input',habilitarBotones)

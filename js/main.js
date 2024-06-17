@@ -311,20 +311,64 @@ const obj_inventario = {
     "vidrios": vidrios, //40
 }
 // botones del fomrmulairo
-document.querySelector('.forms').addEventListener('submit', guardar);
-document.getElementById('eliminar').addEventListener('click', eliminar);
+document.querySelector('.forms').addEventListener('submit', function(event){
+    event.preventDefault();
+    let msg = "Mensjae de prueba";
+    modal(msg).then(result => {
+        if(result){
+            console.log("comfirar")
+            guardar();
+        }
+    })
+    document.querySelector('.btn-modal').click();
+});
+document.getElementById('eliminar').addEventListener('click', function(){
+    let msg = "Mensjae de prueba";
+    modal(msg).then(result => {
+        if(result){
+            console.log("comfirar")
+            eliminar();
+        }
+    })
+    document.querySelector('.btn-modal').click();
+});
 let clickNuevo;
 document.getElementById('nuevo').addEventListener('click', function () {
-    let nuevoInv = nuevo();
-    console.log(nuevoInv);
-    if (nuevoInv) {
-        clickNuevo = 1;
-        cancelar();
-        habilitarForms();
-        document.querySelector('#nuevo').classList.add('disabled')
-    }
+    let msg = "Mensjae de prueba";
+    modal(msg).then(result => {
+        if(result){
+            console.log("comfirar")
+            // let nuevoInv = nuevo();
+            let nuevoInv = true;
+            if (nuevoInv) {
+                clickNuevo = 1;
+                cancelar();
+                habilitarForms();
+                document.querySelector('#nuevo').classList.add('disabled')
+            }
+        }
+    })
+    document.querySelector('.btn-modal').click();
 });
-document.getElementById('cancelar').addEventListener('click', cancelar)
+document.getElementById('cancelar').addEventListener('click', function(){
+    let msg = "¿Esta seguro de quiere canelar este formulario?";
+    modal(msg).then(result => {
+        if(result){
+            console.log("comfirar")
+        }
+    })
+    document.querySelector('.btn-modal').click();
+})
+document.getElementById('buscar').addEventListener('click', function(){
+    let msg = "Mensjae de prueba";
+    modal(msg).then(result => {
+        if(result){
+            console.log("comfirar")
+        }
+    })
+    document.querySelector('.btn-modal').click();
+})
+
 
 // alerta temproral
 function toast(tipo, mensaje) {
@@ -439,7 +483,7 @@ function nuevo() {
     mes = (mes < 10) ? '0' + mes : mes;
     // Crear la cadena con el formato "dd-mm-yyyy"
     let fecha = year + '-' + mes + '-' + dia;
-    return new Promise(function (respuesta) {
+    return new Promise(function (respuesta,reject) {
         $.ajax({
             url: 'includes/functions.php',
             type: 'POST',
@@ -463,13 +507,15 @@ function nuevo() {
                     toast(0, msg)
                     respuesta(false);
                 }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reject(`AJAX error: ${textStatus}, ${errorThrown}`);
             }
         })
     })
 }
 
-function guardar(event) {
-    event.preventDefault();
+function guardar() {
     let form = document.querySelector('.forms');
     form.querySelectorAll('.object').forEach(function (obj) {
         if (!obj.classList.contains('disabled')) {
