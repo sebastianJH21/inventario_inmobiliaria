@@ -108,7 +108,14 @@ navItem.forEach(function (item) {
         }
         //funciones botones
         document.getElementById('cancelar').addEventListener('click', cancelar)
-        document.querySelector('.forms').addEventListener('submit', guardar)
+        document.querySelector('.forms').addEventListener('submit', function (event) {
+            if (edit == 1) {
+                console.log(idObejtos);
+                editar(idObejtos);
+            } else {
+                confirmarGuardar();
+            }
+        });
     });
 });
 function crearPlantilla(nombre, object) {
@@ -331,15 +338,17 @@ function modal(msg){
             </aside>
         </aside>
     `
+    document.querySelector('.btn-modal').insertAdjacentHTML('afterend', template);
     return new Promise((resolve)=>{
-        document.querySelector('.btn-modal').insertAdjacentHTML('afterend', template);
         document.querySelector('#cancelar-modal').addEventListener('click',function(){
             document.querySelector('.modal').remove();
+            document.querySelector('.modal-backdrop').remove();
             resolve(false)
         })
         document.querySelector('#confirmar').addEventListener('click',function(){
             document.querySelector('.close').click();
             document.querySelector('.modal').remove();
+            document.querySelector('.modal-backdrop').remove();
             resolve(true)
         })
     })
@@ -368,8 +377,4 @@ document.getElementById("num_invent").addEventListener('input',habilitarBotones)
         BtnEliminar.classList.add('disabled');
     }
  }
-
-
-
-
 

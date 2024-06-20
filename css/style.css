@@ -63,6 +63,24 @@ aside{
 .custom-control-input {
     left: 15px;
 }
+.modal-body {
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;   
+    padding: 2rem;
+}
+th{
+    text-align: center;
+    padding-right: 2rem;
+}
+td{
+    padding-right: 2rem;
+    border-bottom: 1px solid gray;
+}
+#form-filas{
+    display: flex;
+    gap: 1rem;
+}
 /* GENERAL */
 .nav {
     justify-content: space-between;
