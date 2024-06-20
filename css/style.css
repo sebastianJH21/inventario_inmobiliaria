@@ -237,7 +237,6 @@ fieldset .atributo{
     }
     .buttons {
         margin-top: 1rem;
-        gap: 6.3rem;
     }
     .content-object{
         grid-template-columns: 80%;

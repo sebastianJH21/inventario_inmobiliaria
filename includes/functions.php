@@ -34,21 +34,6 @@ function inventario($codigo, $fecha)
         var_dump($th);
     }
 }
-function confirmarGuardar($tabla, $id_zona, $id_inventario)
-{
-    try {
-        require connection();
-        $sql = "SELECT * FROM $tabla WHERE id_zona = $id_zona AND id_inventario = $id_inventario;";
-        $query = mysqli_query($db, $sql);
-        if ($query->num_rows > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    } catch (\Throwable $th) {
-        var_dump($th);
-    }
-}
 function guardar($tabla, $id_inventario, $id_zona, $propiedades, $valores)
 {
     try {
@@ -145,6 +130,7 @@ function buscarEditar($tabla, $id_inventario, $id_zona)
         require connection();
         $sql = "SELECT * FROM $tabla WHERE id_zona = $id_zona AND id_inventario = $id_inventario;";
         $query = mysqli_query($db, $sql);
+
         $filas = array();
         if ($query->num_rows > 0) {
             while ($row = mysqli_fetch_assoc($query)) {
@@ -155,6 +141,7 @@ function buscarEditar($tabla, $id_inventario, $id_zona)
                 "filas" => $filas
             ];
         }else{
+            // echo mysqli_error($db);
             $respuesta = [
                 "proceso" => false
             ];
@@ -211,11 +198,10 @@ function asociarInvtZona($id_inventario, $id_zona)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["funcion"])) {
         switch ($_POST["funcion"]) {
-            case 1:
-                $tabla = $_POST["tabla"];
+            case 1: //confirmar si existen zonas guardadas
                 $id_inventario = $_POST["id_inventario"];
                 $id_zona = $_POST["id_zona"];
-                $confirmar = confirmarGuardar($tabla, $id_inventario, $id_zona);
+                $confirmar = confirmar($id_inventario, $id_zona);
                 json($confirmar);
                 break;
             case 2: //Guardar formulario por cada zona
@@ -258,26 +244,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $buscar = buscar($codPropiedad);
                 json($buscar);
                 break;
-            case 6: // confirmar editar
-                $id_inventario = $_POST["id_inventario"];
-                $id_zona = $_POST["id_zona"];
-                $confirmar = confirmar($id_inventario, $id_zona);
-                json($confirmar);
-                break;
-            case 7: // confirmar editar
+            case 6: // confirmar informacion para editar
                 $tabla = $_POST["tabla"];
                 $id_inventario = $_POST["id_inventario"];
                 $id_zona = $_POST["id_zona"];
                 $buscarEditar = buscarEditar($tabla, $id_inventario, $id_zona);
                 json($buscarEditar);
                 break;
-            case 8: // 
+            case 7: // Guardar zona en inventario
                 $id_inventario = $_POST["id_inventario"];
                 $id_zona = $_POST["id_zona"];
                 $asociarInvtZona = asociarInvtZona($id_inventario, $id_zona);
                 json($asociarInvtZona);
                 break;
-            case 9: //editar
+            case 8: //editar
                 $id = $_POST["id"];
                 $tabla = $_POST["tabla"];
                 $id_inventario = $_POST["id_inventario"];
@@ -288,15 +268,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $valores[] = "$key = '$value'";
                 }
                 $valores = implode(',',$valores);
-
                 $guardar = editar($id,$tabla,$valores);
-                // $respuesta = [
-                //     "proceso" => $guardar,
-                //     "nombre" => $tabla
-                // ];
                 json($guardar);
                 break;
-            case 10:
+            case 9:
                 $id = $_POST["id"];
                 $tabla = $_POST["tabla"];
                 $eliminar = eliminarObjeto($tabla,$id);

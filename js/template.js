@@ -17,6 +17,12 @@ document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
 if (clickNuevo == 1) {
     habilitarForms();
 }
+if(edit == 1){
+    habilitarForms();
+    document.querySelector('#editar').removeAttribute('hidden');
+    document.querySelector('#guardar').setAttribute('hidden', 'true');
+    // document.querySelector('#buscar').classList.remove('disabled')
+}
 
 let navItem = document.querySelectorAll('.nav-item');
 navItem.forEach(function (item) {
@@ -30,6 +36,8 @@ navItem.forEach(function (item) {
             <aside class="buttons">
                 <button class="btn btn-primary" type="button" name="cancelar" id="cancelar">Cancelar</button>
                 <button class="btn btn-primary disabled"  type="submit" name="guardar" id="guardar">Guardar</button>
+                <button class="btn btn-primary" type="submit" name="editar" id="editar" hidden><span
+                        class="spinner-border" id="loader_editar"></span>Editar</button>
             </aside>
         </form> 
         `
@@ -38,7 +46,6 @@ navItem.forEach(function (item) {
         switch (zona) {
             case "General":
                 form_DesGeneral();
-                console.log(zona);
                 break;
             case "Sala":
                 obj_zona = ["iluminacion", "ventanas", "vidrios", "tubos_cortina", "tomas_electricos", "switches", "televisor", "telefono"];
@@ -51,7 +58,6 @@ navItem.forEach(function (item) {
                     }
                     crearPlantilla(nombre, objeto)
                 })
-                console.log(zona);
                 break;
             case "Cocina":
                 obj_zona = ["iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "tubos_cortina", "barra", "meson", "lava_platos", "gabinete_superior", "gabinete", "campana_extractora", "fogon"]
@@ -64,7 +70,6 @@ navItem.forEach(function (item) {
                     }
                     crearPlantilla(nombre, objeto)
                 })
-                console.log(zona);
                 break;
             case "Baño":
                 obj_zona = ["puertas", "iluminacion", "tomas_electricos", "switches", "paredes_bano", "ducha", "cabina", "piso", "sanitario", "espejos", "lava_manos", "ventanas", "vidrios", "repisas", "accesorios"];
@@ -73,8 +78,6 @@ navItem.forEach(function (item) {
                     objeto = new obj_inventario[nombre]();
                     crearPlantilla(nombre, objeto)
                 })
-                //Revisar el input de cabina de baños
-                console.log(zona);
                 break;
             case "Alcoba":
                 obj_zona = ["puertas", "iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "tubos_cortina", "puertas_closet", "cajones_closet", "entre_panos"];
@@ -83,10 +86,9 @@ navItem.forEach(function (item) {
                     objeto = new obj_inventario[nombre]();
                     crearPlantilla(nombre, objeto)
                 })
-                console.log(zona);
                 break;
             case "Patio":
-                obj_zona = ["puertas", "iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "lavadero", "lavadora", "rejas", "piso", "tendedero", "tejas_transparentes"];
+                obj_zona = ["puertas", "iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "lavadero", "lavadora", "reja", "piso", "tendedero", "tejas_transparentes"];
                 obj_zona.forEach(nombre => {
                     let objeto;
                     if (nombre == "rejas" || nombre == "tendedero") {
@@ -96,21 +98,27 @@ navItem.forEach(function (item) {
                     }
                     crearPlantilla(nombre, objeto)
                 })
-                console.log(zona);
                 break;
         }
 
         document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
             swit.disabled = true;
         })
+        
         if (clickNuevo == 1) {
             habilitarForms();
+        }
+        if(edit == 1){
+            habilitarForms();
+            document.querySelector('#editar').removeAttribute('hidden');
+            document.querySelector('#guardar').setAttribute('hidden', 'true');
+            // document.querySelector('#buscar').classList.remove('disabled')
         }
         //funciones botones
         document.getElementById('cancelar').addEventListener('click', cancelar)
         document.querySelector('.forms').addEventListener('submit', function (event) {
+            event.preventDefault();
             if (edit == 1) {
-                console.log(idObejtos);
                 editar(idObejtos);
             } else {
                 confirmarGuardar();
@@ -136,7 +144,7 @@ function template_object(nom, template_obj) {
                 <fieldset class="atributo">
                     <legend>Estado Inicial</legend>
                     <aside>
-                        <select name="${nom}-estado_inicial" id="${nom}-estado_inicial">
+                        <select name="${nom}-estado_inicial" id="${nom}-estado_inicial" style="width:10rem">
                             <option></option>
                             <option value="1">Muy Malo</option>
                             <option value="2">Malo</option>
@@ -149,7 +157,7 @@ function template_object(nom, template_obj) {
                 <fieldset class="atributo">
                     <legend>Estado Final</legend>
                     <aside>
-                        <select name="${nom}-estado_final" id="${nom}-estado_final">
+                        <select name="${nom}-estado_final" id="${nom}-estado_final" style="width:10rem">
                             <option value=""></option>
                             <option value="1">Muy Malo</option>
                             <option value="2">Malo</option>
@@ -227,8 +235,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Material</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Acero Inox</option>
                                 <option value="2">Enchapado</option>
@@ -244,8 +251,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Tipo</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Pomo</option>
                                 <option value="2">Canilla</option>
@@ -258,8 +264,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Gabinete</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Inferior</option>
                                 <option value="2">Auxiliar</option>
@@ -272,8 +277,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Fogon</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Fogon</option>
                                 <option value="2">Estufa</option>
@@ -286,8 +290,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Ducha</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Regadera</option>
                                 <option value="2">Electrica</option>
@@ -300,8 +303,7 @@ function template_atributos(object, nom) {
                     <fieldset class="atributo">
                         <legend>${nombre}</legend>
                         <aside>
-                            <label for="${nom_obj + `-` + nom}">Cabina</label>
-                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:9rem">
+                            <select name="${nom_obj + `-` + nom}" id="${nom_obj + `-` + nom}" style="width:10rem">
                                 <option value="">Selecionar</option>
                                 <option value="1">Acrilico</option>
                                 <option value="2">Vidrio Templado</option>
