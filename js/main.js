@@ -11,7 +11,7 @@ class objetos {
         this.observaciones = observaciones;
     }
 }
-class objetosCantidad extends objetos{
+class objetosCantidad extends objetos {
     constructor(cantidad, estado_inicial, estado_final, observaciones) {
         super(estado_inicial, estado_final, observaciones);
         this.cantidad = 2;
@@ -115,9 +115,8 @@ class gabinete_superior extends objetos {
     }
 }
 class gabinete extends objetos {
-    constructor(gabinete, puertas, manijas, estado_inicial, estado_final, observaciones) {
+    constructor(puertas, manijas, estado_inicial, estado_final, observaciones) {
         super(estado_inicial, estado_final, observaciones);
-        this.tipo = 6;
         this.puertas = 2;
         this.manijas = 2;
     }
@@ -250,7 +249,8 @@ const obj_inventario = {
     "escaleras": escaleras, //10
     "espejos": objetosCantidad, //11
     "fogon": fogon, //12
-    "gabinete": gabinete, //13
+    "gabinete_auxiliar": gabinete, //13
+    "gabinete_inferior": gabinete, //13
     "gabinete_superior": gabinete_superior, //14 
     "iluminacion": iluminacion, //15
     "lavadero": lavadero, //16
@@ -294,8 +294,8 @@ document.getElementById('buscar').addEventListener('click', function () {
     let numInv = document.querySelector('#num_invent').value;
     let codPro = document.querySelector('#code_pro').value;
     if (numInv != "" && codPro == "") {
-        confirmarEditar();
         edit = 1;
+        confirmarEditar();
     } else {
         buscar(codPro);
     }
@@ -311,7 +311,7 @@ document.getElementById('eliminar').addEventListener('click', function () {
     document.querySelector('.btn-modal').click();
 });
 let clickNuevo = 0;
-document.getElementById('nuevo').addEventListener('click',async function () {
+document.getElementById('nuevo').addEventListener('click', async function () {
     let msg = "¿Quieres crear un nuevo inventario?";
     clickNuevo = await new Promise((resolve) => {
         modal(msg).then(result => {
@@ -321,14 +321,14 @@ document.getElementById('nuevo').addEventListener('click',async function () {
                     cancelar();
                     setTimeout(function () {
                         habilitarForms();
-                    },10)
+                    }, 10)
                     document.querySelector('#nuevo').classList.add('disabled')
                     resolve(1);
                 }
             }
         })
         document.querySelector('.btn-modal').click();
-    }) 
+    })
 });
 document.getElementById('cancelar').addEventListener('click', function () {
     let msg = "¿Esta seguro de quiere canelar este formulario?";
@@ -339,9 +339,6 @@ document.getElementById('cancelar').addEventListener('click', function () {
     })
     document.querySelector('.btn-modal').click();
 })
-
-
-
 // alerta temproral
 function toast(tipo, mensaje) {
     let titulo;
@@ -391,7 +388,7 @@ function check(check, funcion = 0) {
                 input.removeAttribute('required')
             })
         }
-    } else {
+    } else { // vaciar todos los input
         parent.classList.add('disabled');
         vaciarInput(parent);
         parent.querySelectorAll('input, textarea, select').forEach(input => {
@@ -434,33 +431,27 @@ function idZona(zona) {
     }
     return id_zona;
 }
+
 function habilitarForms() {
     document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
         swit.disabled = false;
+        check(swit, 0)
     })
-    validarCheck();
-    document.getElementsByName("switch").forEach(function (swit) {
-        swit.addEventListener('click', function () {
-            check(swit, 1);
-            validarCheck();
-        })
+}
+function validarCheck() {
+    let i = 0;
+    let checks = Array();
+    document.querySelectorAll(".object").forEach(function (obj) {
+        checks[i] = obj.classList.contains('disabled');
+        i++;
     })
-    function validarCheck(){
-        let i = 0;
-        let checks = Array();
-        document.querySelectorAll(".object").forEach(function (obj) {
-            checks[i] = obj.classList.contains('disabled');
-            i++;
-        })
-        if (checks.includes(false)) {
-            document.querySelector('#guardar').classList.remove('disabled')
-            document.querySelector('#editar').classList.remove('disabled')
-        } else {
-            document.querySelector('#guardar').classList.add('disabled')
-            document.querySelector('#editar').classList.add('disabled')
-        }
+    if (checks.includes(false)) {
+        document.querySelector('#guardar').classList.remove('disabled')
+        document.querySelector('#editar').classList.remove('disabled')
+    } else {
+        document.querySelector('#guardar').classList.add('disabled')
+        document.querySelector('#editar').classList.add('disabled')
     }
-    
 }
 
 // funciones de los botones
@@ -591,13 +582,17 @@ async function confirmarEditar() {
         let msg = `¿Desea editar la información de la zona <strong>${zona}</strong> del inventario #${id_inventario}?`;
         modal(msg).then(result => {
             if (result) {
-                buscarEditar(1, id_inventario, id_zona, form)
+                habilitarForms();
                 setTimeout(function () {
-                    habilitarForms();
-                },10)
+                    buscarEditar(1, id_inventario, id_zona, form)
+                }, 10)
+                setTimeout(function () {
+                    validarCheck();
+                }, 100)
                 document.querySelector('#editar').removeAttribute('hidden');
                 document.querySelector('#guardar').setAttribute('hidden', 'true');
-                // document.querySelector('#buscar').classList.add('disabled')
+                document.querySelector('.num_invent').classList.add('disabled');
+                document.querySelector('.code_pro').classList.add('disabled');
             }
         })
         document.querySelector('.btn-modal').click();
@@ -658,24 +653,31 @@ async function confirmarEditar() {
                     document.querySelector('.close').click();
                     document.querySelector('.modal').remove();
                     document.querySelector('.modal-backdrop').remove();
-                    buscarEditar(fila, id_inventario, id_zona, form)
+                    document.querySelector('.num_invent').classList.add('disabled');
+                    document.querySelector('.code_pro').classList.add('disabled');
+                    habilitarForms();
                     setTimeout(function () {
-                        habilitarForms();
-                    },10)
+                        buscarEditar(fila, id_inventario, id_zona, form)
+                    }, 10)
+                    setTimeout(function () {
+                        validarCheck();
+                    }, 100)
                     resolve(true)
                 })
                 form.requestSubmit();
             })
         })
         if (resp) {
-            buscarEditar(fila, id_inventario, id_zona, form)
+            habilitarForms();
             setTimeout(function () {
-                habilitarForms();
-            },10)
+                buscarEditar(fila, id_inventario, id_zona, form)
+            }, 10)
+            setTimeout(function () {
+                validarCheck();
+            }, 100)
         }
     }
 }
-
 
 function buscarEditar(fila, id_inventario, id_zona, form) {
     let i = 0;
@@ -696,9 +698,6 @@ function buscarEditar(fila, id_inventario, id_zona, form) {
             },
             success: function (response) {
                 let respuesta = JSON.parse(response)
-                console.log(tabla);
-                console.log(respuesta);
-                console.log(fila);
                 if (respuesta["proceso"]) {
                     idObejtos[i] = {
                         "nombre": tabla, "id": respuesta["filas"][(fila - 1)]["id"]
@@ -752,40 +751,43 @@ async function editar(objetos) {
             }
         })
     })
-    if(filas == 0){
+    if (filas == 0) {
         let msg = `No existe la zona <strong>${zona}</strong> en el inventario #${id_inventario}. ¿Desea añadir esta zona en el inventario #${id_inventario}?`;
         modal(msg).then(result => {
-            if(result){
-                asocInvtZona(id_inventario, id_zona, zona);
-                EditarGuardar();
+            if (result) {
+                // asocInvtZona(id_inventario, id_zona, zona);
+                // EditarGuardar();
+                guardar();
             }
         })
         document.querySelector('.btn-modal').click();
-    }else{
-        let msg = `¿Desea editar la zona <strong>${zona}</strong> del inventario #${id_inventario}?`;
-        modal(msg).then(result => {
-            if(result){
+    } else {
+        let msg = `¿Desea editar o agregar la zona <strong>${zona}</strong> del inventario #${id_inventario}?`;
+        modal(msg, 1).then(result => { // 1 agrega el boton "agregar" al modal
+            if (result) {
                 EditarGuardar();
+            } else {
+                guardar();
             }
         })
         document.querySelector('.btn-modal').click();
     }
-        function EditarGuardar(){
-            form.querySelectorAll('.object').forEach(function (obj) {
-                let nombreObj = obj.name;
-                let tabla = objetos.find(obj => obj.nombre == nombreObj)
-                if (tabla !== undefined && !obj.classList.contains('disabled')) {
-                    let id = tabla.id;
-                    proceso(8,obj,nombreObj,id) //ediatr 8
-                } else if (tabla !== undefined && obj.classList.contains('disabled')) {
-                    let id = tabla.id;
-                    proceso(9,obj,nombreObj,id) //eliminar 9
-                } else if (tabla === undefined && !obj.classList.contains('disabled')) {
-                    proceso(2,obj,nombreObj,0) //guardar 2
-                }
-            })
-        }
-    function proceso(funcion,obj,nombreObj,id) {
+    function EditarGuardar() {
+        form.querySelectorAll('.object').forEach(function (obj) {
+            let nombreObj = obj.name;
+            let tabla = objetos.find(obj => obj.nombre == nombreObj)
+            if (tabla !== undefined && !obj.classList.contains('disabled')) {
+                let id = tabla.id;
+                proceso(8, obj, nombreObj, id) //ediatr 8
+            } else if (tabla !== undefined && obj.classList.contains('disabled')) {
+                let id = tabla.id;
+                proceso(9, obj, nombreObj, id) //eliminar 9
+            } else if (tabla === undefined && !obj.classList.contains('disabled')) {
+                proceso(2, obj, nombreObj, 0) //guardar 2
+            }
+        })
+    }
+    function proceso(funcion, obj, nombreObj, id) {
         let objeto = new obj_inventario[nombreObj]();
         let propiedades = Array();
         let i = 0;
@@ -905,21 +907,21 @@ async function confirmarGuardar() {
     let objetos = form.querySelectorAll('.object');
     let zona = form.name;
     let id_zona = idZona(zona);
-        let respuesta = await new Promise((resolve) => {
-            $.ajax({
-                url: 'includes/functions.php',
-                type: 'POST',
-                data: {
-                    "funcion": 1,
-                    "id_inventario": id_inventario,
-                    "id_zona": id_zona,
-                },
-                success: function (response) {
-                    let respt = JSON.parse(response);
-                    resolve(respt)
-                }
-            })
+    let respuesta = await new Promise((resolve) => {
+        $.ajax({
+            url: 'includes/functions.php',
+            type: 'POST',
+            data: {
+                "funcion": 1,
+                "id_inventario": id_inventario,
+                "id_zona": id_zona,
+            },
+            success: function (response) {
+                let respt = JSON.parse(response);
+                resolve(respt)
+            }
         })
+    })
     if (respuesta > 0) {
         let msg = `Ya existe la zona <strong>${zona}</strong> en el inventario #${id_inventario}. ¿Desea agregar otra zona <strong>${zona}</strong> en el inventario #${id_inventario}?`;
         modal(msg).then(result => {

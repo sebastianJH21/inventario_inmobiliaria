@@ -21,8 +21,13 @@ if(edit == 1){
     habilitarForms();
     document.querySelector('#editar').removeAttribute('hidden');
     document.querySelector('#guardar').setAttribute('hidden', 'true');
-    // document.querySelector('#buscar').classList.remove('disabled')
 }
+document.getElementsByName("switch").forEach(function (swit) {
+    swit.addEventListener('click', function () {
+        check(swit, 1);
+        validarCheck();
+    })
+})
 
 let navItem = document.querySelectorAll('.nav-item');
 navItem.forEach(function (item) {
@@ -60,7 +65,7 @@ navItem.forEach(function (item) {
                 })
                 break;
             case "Cocina":
-                obj_zona = ["iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "tubos_cortina", "barra", "meson", "lava_platos", "gabinete_superior", "gabinete", "campana_extractora", "fogon"]
+                obj_zona = ["iluminacion", "tomas_electricos", "switches", "ventanas", "vidrios", "tubos_cortina", "barra", "meson", "lava_platos", "gabinete_superior", "gabinete_inferior","gabinete_auxiliar", "campana_extractora", "fogon"]
                 obj_zona.forEach(nombre => {
                     let objeto;
                     if (nombre == "barra") {
@@ -100,6 +105,8 @@ navItem.forEach(function (item) {
                 })
                 break;
         }
+        document.querySelector('#editar').classList.add('disabled');
+        document.querySelector('#guardar').classList.add('disabled');
 
         document.querySelectorAll('input[type="checkbox"').forEach(function (swit) {
             swit.disabled = true;
@@ -112,7 +119,6 @@ navItem.forEach(function (item) {
             habilitarForms();
             document.querySelector('#editar').removeAttribute('hidden');
             document.querySelector('#guardar').setAttribute('hidden', 'true');
-            // document.querySelector('#buscar').classList.remove('disabled')
         }
         //funciones botones
         document.getElementById('cancelar').addEventListener('click', cancelar)
@@ -124,6 +130,21 @@ navItem.forEach(function (item) {
                 confirmarGuardar();
             }
         });
+        document.getElementsByName("switch").forEach(function (swit) {
+            swit.addEventListener('click', function () {
+                check(swit, 1);
+                validarCheck();
+            })
+        })
+        document.getElementById('cancelar').addEventListener('click', function () {
+            let msg = "¿Esta seguro de quiere canelar este formulario?";
+            modal(msg).then(result => {
+                if (result) {
+                    cancelar();
+                }
+            })
+            document.querySelector('.btn-modal').click();
+        })
     });
 });
 function crearPlantilla(nombre, object) {
@@ -318,7 +339,19 @@ function template_atributos(object, nom) {
     })
     return template;
 }
-function modal(msg){
+function modal(msg,btns = 0){
+    let btn1;
+    let btn2;
+    let classBtn;
+    if(btns == 0){
+        btn1 = "Cancelar"
+        btn2 = "Confirmar"
+        classBtn = "secondary"
+    }else{
+        classBtn = "primary"
+        btn1 = "Agregar"
+        btn2 = "Editar"
+    }
     let template = `
     <aside class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -333,8 +366,8 @@ function modal(msg){
                         <p>${msg}</p>
                     </aside>
                     <aside class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelar-modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="confirmar">Confirmar</button>
+                        <button type="button" class="btn btn-${classBtn}" data-dismiss="modal" id="cancelar-modal">${btn1}</button>
+                        <button type="button" class="btn btn-primary" id="confirmar">${btn2}</button>
                     </aside>
                 </aside>
             </aside>
@@ -345,12 +378,16 @@ function modal(msg){
         document.querySelector('#cancelar-modal').addEventListener('click',function(){
             document.querySelector('.modal').remove();
             document.querySelector('.modal-backdrop').remove();
+            document.querySelector('body').classList.remove('modal-open')
+            document.querySelector('body').style.paddingRight = '0px';
             resolve(false)
         })
         document.querySelector('#confirmar').addEventListener('click',function(){
             document.querySelector('.close').click();
             document.querySelector('.modal').remove();
             document.querySelector('.modal-backdrop').remove();
+            document.querySelector('body').classList.remove('modal-open')
+            document.querySelector('body').style.paddingRight = '0px';
             resolve(true)
         })
     })
